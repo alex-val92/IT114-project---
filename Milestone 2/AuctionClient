@@ -30,6 +30,10 @@ public class AuctionClient {
                 out.println(bid);
             }
             
-        }   
+        }catch (UnknownHostException ex) {// Handle case where the server hostname is unknown
+            System.err.println("Unknown host: " + hostname);
+        } catch (IOException ex) {// Handle I/O errors that occur when trying to connect to the server or during communication
+            System.err.println("I/O error: " + ex.getMessage());
+        }
     } 
 }
