@@ -20,6 +20,15 @@ public class AuctionClient {
             }catch (IOException e) {
                 System.err.println("Error reading from server: Disconnected" );
             }).start();
+
+            System.out.println("Connected to The Deal Auction Server!");// Main thread handles user input and sends it to the server
+            String name = scan.nextLine();
+            out.println(name);
+
+            while(scanner.hasNextLine()) {
+                String bid = scan.nextLine();
+                out.println(bid);
+            }
             
         }   
     } 
