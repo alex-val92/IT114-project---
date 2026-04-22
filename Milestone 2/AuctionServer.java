@@ -3,7 +3,7 @@ import java.net.*;
 import java.util.*;
 public class AuctionServer{ 
     private static final int Port = 5000;
-    public static double currBid = 0.0;
+    public static int currBid = 0;
     private static String currBidder = "No one";
     public static List<AuctionClientHandler> clients = new ArrayList<>();
 
@@ -23,15 +23,15 @@ public class AuctionServer{
     }
 
 
-    public static synchronized String placeBid (String bidderName, double biggestBid) {//synchronized to ensure thread safety when multiple clients place bids simultaneously
+    public static synchronized String placeBid (String bidderName, int biggestBid) {//synchronized to ensure thread safety when multiple clients place bids simultaneously
         if (biggestBid > currBid) {
             currBid = biggestBid;
             currBidder = bidderName;
             String highestBidUp = "Current Highest Bid" + currBid + ": by " + currBidder;
             broadcast(highestBidUp);
-            return "You're the top bidder @ $ " + biggestBid;
+            return "You're the top bidder @ $%.2f " + biggestBid;
         }else {
-            return "Better luck next time bid too low highestbid is $ " + currBid;
+            return "Better luck next time bid too low highestbid is $%.2f " + currBid;
         }
     }
 
