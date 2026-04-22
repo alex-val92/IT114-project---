@@ -23,22 +23,28 @@ public class AuctionServer {
             System.err.println("Error starting server: " + e.getMessage());
         }//Try block throws IOException if there is an error starting the server or accepting a client connection
     }
-}
 
-public static synchrosnized String placeBid (String bidderName, double biggestBid) /* thread safe method using synchronized to prevent race conditions during high volume bidding  */ {
-    if (bidAmount > currBid) {
-        currBid = biggestBid;
-        currBidder = bidderName;
-        String highestBidUp = "Current Highest Bid" + currBid + ": by " + currBidder;
-        broadcast(highestBidUp);
-        return "You're the top bidder @ $ " + biggestBid;
-    }else {
-        return "Better luck next time bid too low highet bid is $ " + currBid;
+
+    public static synchrosnized String placeBid (String bidderName, double biggestBid) /* thread safe method using synchronized to prevent race conditions during high volume bidding  */ {
+        if (bidAmount > currBid) {
+            currBid = biggestBid;
+            currBidder = bidderName;
+            String highestBidUp = "Current Highest Bid" + currBid + ": by " + currBidder;
+            broadcast(highestBidUp);
+            return "You're the top bidder @ $ " + biggestBid;
+        }else {
+            return "Better luck next time bid too low highet bid is $ " + currBid;
+        }
     }
-}
 
-public static void broadcast (String message) /*pushes updates to every active socket */{  
-    for (AuctionHandler client : clients){
-        client.sendMessage(message);
+    public static void broadcast (String message) /*pushes updates to every active socket */{  
+        for (AuctionHandler client : clients){
+            client.sendMessage(message);
+        }
+    }
+
+    public static void removeClient (AuctionHandler handler){
+        clients.remove(handler);
+        System.out.println("Inactive client removed. Active Bidders: " + clients.size());
     }
 }
