@@ -36,3 +36,9 @@ public static synchrosnized String placeBid (String bidderName, double biggestBi
         return "Better luck next time bid too low highet bid is $ " + currBid;
     }
 }
+
+public static void broadcast (String message) /*pushes updates to every active socket */{  
+    for (AuctionHandler client : clients){
+        client.sendMessage(message);
+    }
+}
