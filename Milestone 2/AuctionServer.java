@@ -10,10 +10,10 @@ public class AuctionServer {
     public static List<AuctionClientHandler> clients = new ArrayList<>();
 
     public static void main(String[] args) {
-        try(ServerSocket server = new ServerSocket(Port)){
+        try(ServerSocket server = new ServerSocket(Port))//listen for incoming client connections on dedicated port{
             System.out.println("The Deal: Server Live on Port" + Port);
 
-            while (true) {
+            while (true) /*handle concurrent connections using a thread per client model*/ {
                 Socket clientSocket = server.accept();
                 AuctionHandler handler = new AuctionHandler(clientSocket);
                 clients.add(handler);// Add the new client handler to the list of clients
@@ -25,7 +25,7 @@ public class AuctionServer {
     }
 }
 
-public static synchrosnized String placeBid (String bidderName, double biggestBid) {
+public static synchrosnized String placeBid (String bidderName, double biggestBid) /* thread safe method using synchronized to prevent race conditions during high volume bidding  */ {
     if (bidAmount > currBid) {
         currBid = biggestBid;
         currBidder = bidderName;
