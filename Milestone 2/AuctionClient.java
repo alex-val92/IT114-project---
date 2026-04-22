@@ -3,7 +3,7 @@ import java.net.*;
 import java.util.*;
 public class AuctionClient {
     public static void main(String[] args) {
-        String hostname = 'Localhost';
+        String hostname = "localhost";
         int port = 5000;
         try (Socket socket = new Socket(hostname, port)) {//try-with-resources to ensure the socket is closed properly
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);// Set up output stream to send messages to the server
@@ -12,20 +12,22 @@ public class AuctionClient {
 
 
             new Thread(() -> {
-                String serverMessage;
-                while ((serverMessage = in.readLine()) != null) {// Thread to listen for messages from the server and print them to the console
-                    System.out.println("[Server]: " + serverMessage);
-                    System.out.print("Enter your bid: ");
+                try {
+                    String serverMessage;
+                    while ((serverMessage = in.readLine()) != null) {// Thread to listen for messages from the server and print them to the console
+                        System.out.println("[Server]: " + serverMessage);
+                        System.out.print("Enter your bid: ");
+                    }
+                }catch (IOException e) {
+                    System.err.println("Error reading from server: Disconnected" );
                 }
-            }catch (IOException e) {
-                System.err.println("Error reading from server: Disconnected" );
             }).start();
 
             System.out.println("Connected to The Deal Auction Server!");// Main thread handles user input and sends it to the server
             String name = scan.nextLine();
             out.println(name);
 
-            while(scanner.hasNextLine()) {
+            while(scan.hasNextLine()) {
                 String bid = scan.nextLine();
                 out.println(bid);
             }
