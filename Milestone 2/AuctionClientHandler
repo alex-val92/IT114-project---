@@ -3,4 +3,15 @@ public class AuctionClientHandler implements Runnable {
     private PrintWriter out;
     private BufferedReader in;
     private String bidderName;
+
+    public AuctionClientHandler (Socket socket) {
+        this.clientSocket = socket;
+    }
+    @Override
+    public void run() {
+        try{
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            out = new PrintWriter(clientSocket.getOutputStream(), true);
+        }
+    }
 }
