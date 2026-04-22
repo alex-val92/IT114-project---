@@ -1,0 +1,6 @@
+public class AuctionClientHandler implements Runnable {
+    private Socket clientSocket;
+    private PrintWriter out;
+    private BufferedReader in;
+    private String bidderName;
+}
