@@ -16,7 +16,7 @@ public class AuctionClient {
                     String serverMessage;
                     while ((serverMessage = in.readLine()) != null) {// Thread to listen for messages from the server and print them to the console
                         System.out.println("[Server]: " + serverMessage);
-                        System.out.print("Enter your bid: ");
+                        System.out.print("Enter your name: ");
                     }
                 }catch (IOException e) {
                     System.err.println("Error reading from server: Disconnected" );
