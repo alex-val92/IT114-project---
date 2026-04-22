@@ -10,12 +10,12 @@ public class AuctionServer {
     public static List<AuctionClientHandler> clients = new ArrayList<>();
 
     public static void main(String[] args) {
-        try(ServerSocket server = new ServerSocket(Port))//listen for incoming client connections on dedicated port{
+        try(ServerSocket server = new ServerSocket(Port)){ //try-with-resources to ensure the server socket is closed properly
             System.out.println("The Deal: Server Live on Port" + Port);
 
             while (true) /*handle concurrent connections using a thread per client model*/ {
                 Socket clientSocket = server.accept();
-                AuctionHandler handler = new AuctionHandler(clientSocket);
+                AuctionClientHandler handler = new AuctionClientHandler(clientSocket);
                 clients.add(handler);// Add the new client handler to the list of clients
                 new Thread(handler).start();
             }
@@ -25,25 +25,25 @@ public class AuctionServer {
     }
 
 
-    public static synchrosnized String placeBid (String bidderName, double biggestBid) /* thread safe method using synchronized to prevent race conditions during high volume bidding  */ {
-        if (bidAmount > currBid) {
+    public static synchronized String placeBid (String bidderName, double biggestBid) {//synchronized to ensure thread safety when multiple clients place bids simultaneously
+        if (biggestBid > currBid) {
             currBid = biggestBid;
             currBidder = bidderName;
             String highestBidUp = "Current Highest Bid" + currBid + ": by " + currBidder;
             broadcast(highestBidUp);
             return "You're the top bidder @ $ " + biggestBid;
         }else {
-            return "Better luck next time bid too low highet bid is $ " + currBid;
+            return "Better luck next time bid too low highestbid is $ " + currBid;
         }
     }
 
     public static void broadcast (String message) /*pushes updates to every active socket */{  
-        for (AuctionHandler client : clients){
+        for (AuctionClientHandler client : clients){
             client.sendMessage(message);
         }
     }
 
-    public static void removeClient (AuctionHandler handler){
+    public static void removeClient (AuctionClientHandler handler){
         clients.remove(handler);
         System.out.println("Inactive client removed. Active Bidders: " + clients.size());
     }
