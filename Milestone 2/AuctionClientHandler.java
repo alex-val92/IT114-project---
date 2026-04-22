@@ -20,8 +20,8 @@ public class AuctionClientHandler implements Runnable {
                 out.println("Hello " + bidderName + "! Current highest bid is $" + AuctionServer.currBid);
                 String inputLine;
                 while ((inputLine = in.readLine()) !=null) {// Read client input in a loop until the client disconnects
-                    try {// Attempt to parse the input as a double representing the bid amount
-                        double bidAmount = Double.parseDouble(inputLine);
+                    try {// Attempt to parse the input as an integer representing the bid amount
+                        int bidAmount = Integer.parseInt(inputLine);
                         String response = AuctionServer.placeBid(bidderName, bidAmount);
                         out.println(response);
                     } catch (NumberFormatException e) {
