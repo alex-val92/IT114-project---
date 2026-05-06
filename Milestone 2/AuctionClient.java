@@ -5,10 +5,10 @@ public class AuctionClient {
     public static void main(String[] args) {
         String hostname = "localhost";
         int port = 5000;
-        try (Socket socket = new Socket(hostname, port)) {//try-with-resources to ensure the socket is closed properly
+        try (Socket socket = new Socket(hostname, port); //try-with-resources to ensure the socket and scanner are closed properly
+             Scanner scan = new Scanner(System.in)) {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);// Set up output stream to send messages to the server
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));// Set up input stream to receive messages from the server
-            Scanner scan = new Scanner(System.in);// Scanner for reading user input from the console
 
 
             new Thread(() -> {
