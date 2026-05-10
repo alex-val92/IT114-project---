@@ -30,5 +30,14 @@ public class TheDealGui extends Jframe{
         setSize(400, 550);
         setCloseOpDefault(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
+
+
+        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        timerLabel = new JLabel("Time Left: 60s", SwingConstants.CENTER);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        statusLabel = new JLabel("Waiting for bidders...", SwingConstants.CENTER);
+        topPanel.add(timerLabel);
+        topPanel.add(statusLabel);
+        add(topPanel, BorderLayout.NORTH);
     }
 }
