@@ -28,5 +28,7 @@ public class TheDealGui extends Jframe{
     private void setupUI() {
         setTitle ("THE DEAL - " + playerId);
         setSize(400, 550);
+        setCloseOpDefault(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout(10, 10));
     }
 }
