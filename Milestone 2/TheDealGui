@@ -17,4 +17,16 @@ public class TheDealGui extends Jframe{
     private int countdown = 60;
     private String playerId;
     private JTextField bidField;
+
+    public TheDealGui(String host, int port) {
+        this.playerId = String.format("Player-%06d", new Random().nextInt(999999));
+        setupUI();
+        connectToServer(host, port);
+
+    }
+
+    private void setupUI() {
+        setTitle ("THE DEAL - " + playerId);
+        setSize(400, 550);
+    }
 }
