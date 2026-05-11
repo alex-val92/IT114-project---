@@ -39,5 +39,11 @@ public class TheDealGui extends Jframe{
         topPanel.add(timerLabel);
         topPanel.add(statusLabel);
         add(topPanel, BorderLayout.NORTH);
-    }
+        
+        leaderboardModel = new DefaultListModel<>();
+        JList<String> leaderboardList = new JList<>(leaderboardModel);
+        add(new JSrollP(leaderboardList), BorderLayout.Center);
+
+        
+    }  
 }
