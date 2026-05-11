@@ -13,7 +13,7 @@ public class TheDealGui extends JFrame {
     private JLabel timerLabel;
     private Timer timer;
     private JLabel statusLabel;
-    private int timeLeft = 60; // Standardized name
+    private int timeLeft = 60; 
     private String playerId;
     private JTextField bidField;
 
