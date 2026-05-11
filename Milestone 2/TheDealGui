@@ -48,6 +48,10 @@ public class TheDealGui extends Jframe{
         bidField = new JTextField();
         JButton bidButton = new JButton("Place Bid");
 
+        footer.add(new JLabel ("Your Bid: "), BorderLayout.WEST);
+        footer.add(bidField, BorderLayout.CENTER);
+        footer.add(bidButton, BorderLayout.EAST);
+        add(footer, BorderLayout.SOUTH);
         
 
 
