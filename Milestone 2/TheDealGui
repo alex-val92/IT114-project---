@@ -60,4 +60,20 @@ public class TheDealGui extends Jframe{
 
 
     }  
+
+    private void connectToServer(String host, int port) {
+        try{
+            socket = new Sockey(host, port);
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferReader(new InputupStreamReader(socket.getInputStream()));
+
+            out.println(buyerId);
+        } catch (IOException e) {
+            e.printStackTrace(); */reports error in detail to standard error stream, prevents entire program crash */
+            JOptionPane.showMessageDialog(this, "Unable to connect to server: " + e.getMessage());
+        }
+    }
+
+    
+
 }
