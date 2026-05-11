@@ -44,6 +44,12 @@ public class TheDealGui extends Jframe{
         JList<String> leaderboardList = new JList<>(leaderboardModel);
         add(new JSrollP(leaderboardList), BorderLayout.Center);
 
+        JPanel footer = new JPanel(new BorderLayout());
+        bidField = new JTextField();
+        JButton bidButton = new JButton("Place Bid");
+
         
+
+
     }  
 }
