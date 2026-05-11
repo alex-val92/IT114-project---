@@ -15,7 +15,7 @@ public class AuctionClientHandler implements Runnable {
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));// Set up input and output streams for communication with the client
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-                out.println("Welcome to The Deal! Please enter your name:");
+                out.println("Welcome to The Deal! Please enter your bid");
                 this.bidderName = in.readLine();
                 out.println("Hello " + bidderName + "! Current highest bid is $" + AuctionServer.currBid);
                 String inputLine;
