@@ -15,7 +15,7 @@ public class TheDealGui extends JFrame {
     private Timer timer;
     private JLabel statusLabel;
     private JLabel itemImageLabel;
-    private String[] itemImages = new String[0];
+    private String[] itemImages = {"item0.png", "item1.png"};
     private int timeLeft = 60; 
     private String playerId;
 
@@ -40,13 +40,24 @@ public class TheDealGui extends JFrame {
         topPanel.add(statusLabel);
         add(topPanel, BorderLayout.NORTH);
 
+        JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
+
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.setBorder(BorderFactory.createTitledBorder("Auction Item"));
+        imagePanel.setBackground(Color.WHITE);
+
+        itemImageLabel = new JLabel("Loading Item...", SwingConstants.CENTER);
+        itemImageLabel.setPreferredSize(new Dimension(250, 250));
+        imagePanel.add(itemImageLabel, BorderLayout.CENTER);
+
+        centerPanel.add(imagePanel, BorderLayout.NORTH);
+
         leaderboardModel = new DefaultListModel<>();
         JList<String> leaderboardList = new JList<>(leaderboardModel);
+        leaderboardList.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        leaderboardList.setBackground(new Color(245, 245, 245));
+        leaderboardList.setSelectionBackground(Color.YELLOW);
 
-        JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
-        itemImageLabel = new JLabel("Item Image", SwingConstants.CENTER);
-        itemImageLabel.setPreferredSize(new Dimension(200, 200));
-        centerPanel.add(itemImageLabel, BorderLayout.NORTH);
         centerPanel.add(new JScrollPane(leaderboardList), BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
 
@@ -122,15 +133,24 @@ public class TheDealGui extends JFrame {
 }
 
 private void updateImageById(int index) {
+    System.out.println("Attempting to load image at index: " + index); // DEBUG
     if (index >= 0 && index < itemImages.length) {
         String imageName = itemImages[index];
+        System.out.println("Looking for file: " + imageName); // DEBUG
         ImageIcon icon = new ImageIcon(imageName);
-        Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-        itemImageLabel.setIcon(new ImageIcon(img));
-        itemImageLabel.setText(""); 
+        
+        if (icon.getImageLoadStatus() == MediaTracker.COMPLETE) {
+            Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            itemImageLabel.setIcon(new ImageIcon(img));
+            itemImageLabel.setText(""); 
+            System.out.println("Image loaded successfully!");
+        } else {
+            System.out.println("Failed to load image data. Check if file exists/is valid.");
+        }
+    } else {
+        System.out.println("Index out of bounds! Array length is: " + itemImages.length);
     }
 }
-
     private void sendInBid() {
         String amount = bidField.getText().trim();
         if (!amount.isEmpty() && out != null) {
