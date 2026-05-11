@@ -11,37 +11,33 @@ public class TheDealGui extends JFrame {
 
     private DefaultListModel<String> leaderboardModel;
     private JTextField nameField;
+    private JTextField bidField;
     private JLabel timerLabel;
     private Timer timer;
     private JLabel statusLabel;
     private int timeLeft = 60; 
-    private String playerId;
-    private JTextField bidField;
 
     public TheDealGui(String host, int port) {
-        this.playerId = String.format("Player-%06d", new Random().nextInt(999999));
         setupUI();
-        connectToServer(host, port, playerId);
     }
 
     private void setupUI() {
-        setTitle("THE DEAL - " + playerId);
+        setTitle("THE DEAL");
         setSize(400, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        JPanel topPanel = new JPanel(new GridLayout(3,1,5,5));
+        JPanel topPanel = new JPanel(new GridLayout(3, 1, 5, 5));
         timerLabel = new JLabel("Time Left: 60s", SwingConstants.CENTER);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        statusLabel = new JLabel("Enter your name:", SwingConstants.CENTER);
+        statusLabel = new JLabel("Enter Name & Connect", SwingConstants.CENTER);
 
         JPanel nameInputPanel = new JPanel(new BorderLayout(5, 5));
-        nameField = new JTextField(playerId);
+        nameField = new JTextField("Player-" + new Random().nextInt(999));
         JButton connectBtn = new JButton("Connect");
-        nameInputPanel.add(new JLabel ("Name:"), BorderLayout.WEST);
+        nameInputPanel.add(new JLabel(" Name: "), BorderLayout.WEST);
         nameInputPanel.add(nameField, BorderLayout.CENTER);
         nameInputPanel.add(connectBtn, BorderLayout.EAST);
-
 
         topPanel.add(timerLabel);
         topPanel.add(statusLabel);
@@ -52,13 +48,13 @@ public class TheDealGui extends JFrame {
         JList<String> leaderboardList = new JList<>(leaderboardModel);
         add(new JScrollPane(leaderboardList), BorderLayout.CENTER);
 
-        JPanel footer = new JPanel(new BorderLayout(5,5));
+        JPanel footer = new JPanel(new BorderLayout(5, 5));
         bidField = new JTextField();
         bidField.setEnabled(false);
         JButton bidButton = new JButton("Place Bid");
         bidButton.setEnabled(false);
 
-        footer.add(new JLabel("Your Bid: "), BorderLayout.WEST);
+        footer.add(new JLabel(" Your Bid: "), BorderLayout.WEST);
         footer.add(bidField, BorderLayout.CENTER);
         footer.add(bidButton, BorderLayout.EAST);
         add(footer, BorderLayout.SOUTH);
@@ -66,18 +62,12 @@ public class TheDealGui extends JFrame {
         connectBtn.addActionListener(e -> {
             String chosenName = nameField.getText().trim();
             if (!chosenName.isEmpty()) {
-                playerId = chosenName;
                 connectToServer("localhost", 5000, chosenName);
-                nameField.setEnabled(false);
                 connectBtn.setEnabled(false);
+                nameField.setEditable(false);
                 bidField.setEnabled(true);
                 bidButton.setEnabled(true);
-                statusLabel.setText("Connected as: " + playerId);
-            } else {
-                JOptionPane.showMessageDialog(this, "Please enter a valid name.");
             }
-
-        
         });
 
         bidButton.addActionListener(e -> sendInBid());
@@ -86,17 +76,14 @@ public class TheDealGui extends JFrame {
         countDownInit();
     }
 
-    private void connectToServer(String host, int port, String playerId) {
-        this.playerId = playerId;
-        setTitle("THE DEAL - " + playerId);
-
+    private void connectToServer(String host, int port, String userName) {
         new Thread(() -> {
             try {
                 socket = new Socket(host, port);
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                out.println(playerId); // Send ID to server
+                out.println(userName); 
 
                 String message;
                 while ((message = in.readLine()) != null) {
@@ -104,14 +91,14 @@ public class TheDealGui extends JFrame {
                     SwingUtilities.invokeLater(() -> serverMessageHandle(finalMessage));
                 }
             } catch (IOException e) {
-                SwingUtilities.invokeLater(() -> statusLabel.setText("Disconnected from server."));
+                SwingUtilities.invokeLater(() -> statusLabel.setText("Connection Failed."));
             }
         }).start();
     }
 
     private void serverMessageHandle(String msg) {
         leaderboardModel.insertElementAt(msg, 0);
-        if (msg.contains("The Highest Bid:") || msg.contains("You are the highest bidder!")) {
+        if (msg.contains("Highest Bid") || msg.contains("highest bidder")) {
             resetTime();
         }
     }
