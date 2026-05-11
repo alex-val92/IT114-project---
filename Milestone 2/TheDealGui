@@ -4,8 +4,7 @@ import java.io.*;
 import java.util.Random;
 import java.net.*;
 
-
-public class TheDealGui extends Jframe{
+public class TheDealGui extends JFrame {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
@@ -14,7 +13,7 @@ public class TheDealGui extends Jframe{
     private JLabel timerLabel;
     private Timer timer;
     private JLabel statusLabel;
-    private int countdown = 60;
+    private int timeLeft = 60; // Standardized name
     private String playerId;
     private JTextField bidField;
 
@@ -22,14 +21,13 @@ public class TheDealGui extends Jframe{
         this.playerId = String.format("Player-%06d", new Random().nextInt(999999));
         setupUI();
         connectToServer(host, port);
-
+    }
 
     private void setupUI() {
-        setTitle ("THE DEAL - " + playerId);
+        setTitle("THE DEAL - " + playerId);
         setSize(400, 550);
-        setCloseOpDefault(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
-
 
         JPanel topPanel = new JPanel(new GridLayout(2, 1));
         timerLabel = new JLabel("Time Left: 60s", SwingConstants.CENTER);
@@ -38,98 +36,87 @@ public class TheDealGui extends Jframe{
         topPanel.add(timerLabel);
         topPanel.add(statusLabel);
         add(topPanel, BorderLayout.NORTH);
-        
+
         leaderboardModel = new DefaultListModel<>();
         JList<String> leaderboardList = new JList<>(leaderboardModel);
-        add(new JSrollP(leaderboardList), BorderLayout.Center);
+        add(new JScrollPane(leaderboardList), BorderLayout.CENTER);
 
         JPanel footer = new JPanel(new BorderLayout());
         bidField = new JTextField();
         JButton bidButton = new JButton("Place Bid");
 
-        footer.add(new JLabel ("Your Bid: "), BorderLayout.WEST);
+        footer.add(new JLabel("Your Bid: "), BorderLayout.WEST);
         footer.add(bidField, BorderLayout.CENTER);
         footer.add(bidButton, BorderLayout.EAST);
         add(footer, BorderLayout.SOUTH);
 
-        bidButton.addActionListener(e -> sendBid());
-        bidField.addActionListener(e -> sendBid());
+        bidButton.addActionListener(e -> sendInBid());
+        bidField.addActionListener(e -> sendInBid());
 
-        intializeTimer();
-
-
-    }  
+        countDownInit();
+    }
 
     private void connectToServer(String host, int port) {
-        try{
-            socket = new Sockey(host, port);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferReader(new InputupStreamReader(socket.getInputStream()));
+        new Thread(() -> {
+            try {
+                socket = new Socket(host, port);
+                out = new PrintWriter(socket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            out.println(buyerId);
-        } catch (IOException e) {
-            e.printStackTrace(); */reports error in detail to standard error stream, prevents entire program crash */
-            JOptionPane.showMessageDialog(this, "Unable to connect to server: " + e.getMessage());
-        }
-    }
+                out.println(playerId); // Send ID to server
 
-    new Thread (() -> {
-        try {
-            String message;
-            while((message = in.readLine()) !=null) {
-                String finalMessage = message; 
-                SwingUtilities.invokeLater(() -> processServerMessage(finalMessage));
-
-            }
-        } catch (IOException e) {
-                    SwingUtilities.invokeLater(() -> statusLabel.setText("Disconnected from server."));
+                String message;
+                while ((message = in.readLine()) != null) {
+                    String finalMessage = message;
+                    SwingUtilities.invokeLater(() -> serverMessageHandle(finalMessage));
                 }
-            }).start();
-
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Could not connect to server: " + e.getMessage());
-            System.exit(1);
-        }
+            } catch (IOException e) {
+                SwingUtilities.invokeLater(() -> statusLabel.setText("Disconnected from server."));
+            }
+        }).start();
     }
-    private void serverMessageHandle (String msg){
+
+    private void serverMessageHandle(String msg) {
         leaderboardModel.insertElementAt(msg, 0);
-
-        if(msg.contains("The Highest Bid:") || msg.contains("You are the highest bidder!")){
-            resetTimer();
-
+        if (msg.contains("The Highest Bid:") || msg.contains("You are the highest bidder!")) {
+            resetTime();
         }
     }
+
     private void sendInBid() {
         String amount = bidField.getText().trim();
-        if(!amount.isEmpty()) {
-            out.println(amount);//send auction handler 
+        if (!amount.isEmpty() && out != null) {
+            out.println(amount);
             bidField.setText("");
         }
     }
-    private void countDownInit(){
+
+    private void countDownInit() {
         timer = new Timer(1000, e -> {
             if (timeLeft > 0) {
                 timeLeft--;
-                timerLabel.setText(String.format("Time Left: %ds", timerLeft));
-                if(timerLeft <= 10) timerLabel.setForeground(Color.RED);
-                
-            }else{
-                ((Timer)e.getSource()).stop();
+                timerLabel.setText(String.format("Time Left: %ds", timeLeft));
+                if (timeLeft <= 10) timerLabel.setForeground(Color.RED);
+            } else {
+                timer.stop();
                 timerLabel.setText("!!!SOLD!!!");
                 bidField.setEnabled(false);
-                JOptionPane.showMessageDialog(tis, "Auction Ended! Check the leaderboard for results.");
+                JOptionPane.showMessageDialog(this, "Auction Ended!");
             }
         });
         timer.start();
     }
+
     private void resetTime() {
         timeLeft = 60;
-        timerLabel.setForeground(Color.PURPLE);
+        timerLabel.setForeground(Color.MAGENTA);
         timerLabel.setText("Time Left: 60s");
-        if (!timer.isRunning()) {
+        if (timer != null && !timer.isRunning()) {
             timer.start();
         }
-        public static void main(String[] args){
-            SwingUtilities.invokeLater(() -> new TheDealGui("localhost", 5000).setVisible(true));
-        }
     }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new TheDealGui("localhost", 5000).setVisible(true));
+    }
+}
