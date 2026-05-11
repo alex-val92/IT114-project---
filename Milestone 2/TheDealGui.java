@@ -86,6 +86,16 @@ public class TheDealGui extends JFrame {
     }
 
    private void serverMessageHandle(String msg) {
+
+    if (msg.startsWith("IMAGE:")) {
+        try {
+            int index = Integer.parseInt(msg.substring(6).trim());
+            updateImageById(index);
+        } catch (Exception e) {
+            itemImageLabel.setText("Image Load Error");
+        }
+        return; 
+    }
     String lower = msg.toLowerCase();
     
   
