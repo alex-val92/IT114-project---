@@ -74,6 +74,24 @@ public class TheDealGui extends Jframe{
         }
     }
 
-    
+    new Thread (() -> {
+        try {
+            String message;
+            while((message = in.readLine()) !=null) {
+                String finalMessage = message; 
+                SwingUtilities.invokeLater(() -> processServerMessage(finalMessage));
 
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Connection lost: " + e.getMessage());
+            System.exit(1);
+        }
+        }).start();
+    }catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Connection lost: " + e.getMessage());
+        System.exit(1);
+        } 
+    }
+    private void serverMessagehandle(String msg){
+        leaderboardModel.insertElementAt(msg, 0);
 }
