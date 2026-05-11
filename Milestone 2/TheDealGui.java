@@ -14,6 +14,8 @@ public class TheDealGui extends JFrame {
     private JLabel timerLabel;
     private Timer timer;
     private JLabel statusLabel;
+    private JLabel itemImageLabel;
+    private String[] itemImages = new String[0];
     private int timeLeft = 60; 
     private String playerId;
 
@@ -40,7 +42,13 @@ public class TheDealGui extends JFrame {
 
         leaderboardModel = new DefaultListModel<>();
         JList<String> leaderboardList = new JList<>(leaderboardModel);
-        add(new JScrollPane(leaderboardList), BorderLayout.CENTER);
+
+        JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
+        itemImageLabel = new JLabel("Item Image", SwingConstants.CENTER);
+        itemImageLabel.setPreferredSize(new Dimension(200, 200));
+        centerPanel.add(itemImageLabel, BorderLayout.NORTH);
+        centerPanel.add(new JScrollPane(leaderboardList), BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
 
         JPanel footer = new JPanel(new BorderLayout(5, 5));
         bidField = new JTextField();
@@ -77,18 +85,41 @@ public class TheDealGui extends JFrame {
         }).start();
     }
 
-    private void serverMessageHandle(String msg) {
-        // Filter out the server's request for a name since we send it automatically
-        String lower = msg.toLowerCase();
-        if (lower.contains("please enter your name") || lower.contains("welcome to the deal")) {
-            return;
+   private void serverMessageHandle(String msg) {
+    String lower = msg.toLowerCase();
+    
+  
+    if (msg.startsWith("IMAGE:")) {
+        try {
+            int imageIndex = Integer.parseInt(msg.substring(6).trim());
+            updateImageById(imageIndex);
+        } catch (Exception e) {
+            System.out.println("Error parsing image index");
         }
-
-        leaderboardModel.insertElementAt(msg, 0);
-        if (msg.contains("Highest Bid") || msg.contains("highest bidder")) {
-            resetTime();
-        }
+        return; 
     }
+
+    // 2. Existing filters
+    if (lower.contains("please enter your name") || lower.contains("welcome to the deal")) {
+        return;
+    }
+
+    leaderboardModel.insertElementAt(msg, 0);
+    
+    if (msg.contains("Highest Bid") || msg.contains("highest bidder")) {
+        resetTime();
+    }
+}
+
+private void updateImageById(int index) {
+    if (index >= 0 && index < itemImages.length) {
+        String imageName = itemImages[index];
+        ImageIcon icon = new ImageIcon(imageName);
+        Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+        itemImageLabel.setIcon(new ImageIcon(img));
+        itemImageLabel.setText(""); 
+    }
+}
 
     private void sendInBid() {
         String amount = bidField.getText().trim();
