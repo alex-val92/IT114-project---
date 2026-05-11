@@ -30,12 +30,11 @@ public class TheDealGui extends JFrame {
         JPanel topPanel = new JPanel(new GridLayout(3, 1, 5, 5));
         timerLabel = new JLabel("Time Left: 60s", SwingConstants.CENTER);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        statusLabel = new JLabel("Enter Name & Connect", SwingConstants.CENTER);
+        statusLabel = new JLabel("Connect", SwingConstants.CENTER);
 
         JPanel nameInputPanel = new JPanel(new BorderLayout(5, 5));
         nameField = new JTextField("Player-" + new Random().nextInt(999));
         JButton connectBtn = new JButton("Connect");
-        nameInputPanel.add(new JLabel(" Name: "), BorderLayout.WEST);
         nameInputPanel.add(nameField, BorderLayout.CENTER);
         nameInputPanel.add(connectBtn, BorderLayout.EAST);
 
