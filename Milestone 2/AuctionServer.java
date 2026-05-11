@@ -37,6 +37,9 @@ public class AuctionServer {
         if (biggestBid > currBid) {
             currBid = biggestBid;
             currBidder = bidderName;
+            
+            broadcast("IMAGE:" + currImageIndex);
+
             String highestBidUp = "Current Highest Bid " + currBid + ": by " + currBidder;
             broadcast(highestBidUp);
             return "You're the top bidder @ $ " + biggestBid;
