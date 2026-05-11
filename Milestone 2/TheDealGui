@@ -52,7 +52,11 @@ public class TheDealGui extends Jframe{
         footer.add(bidField, BorderLayout.CENTER);
         footer.add(bidButton, BorderLayout.EAST);
         add(footer, BorderLayout.SOUTH);
-        
+
+        bidButton.addActionListener(e -> sendBid());
+        bidField.addActionListener(e -> sendBid());
+
+        intializeTimer();
 
 
     }  
