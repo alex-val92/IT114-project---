@@ -106,4 +106,20 @@ public class TheDealGui extends Jframe{
             bidField.setText("");
         }
     }
+    private void countDownInit(){
+        timer = new Timer(1000, e -> {
+            if (timeLeft > 0) {
+                timeLeft--;
+                timerLabel.setText(String.format("Time Left: %ds", timerLeft));
+                if(timerLeft <= 10) timerLabel.setForeground(Color.RED);
+                
+            }else{
+                ((Timer)e.getSource()).stop();
+                timerLabel.setText("!!!SOLD!!!");
+                bidField.setEnabled(false);
+                JOptionPane.showMessageDialog(tis, "Auction Ended! Check the leaderboard for results.");
+            }
+        });
+        timer.start();
+    }
 
