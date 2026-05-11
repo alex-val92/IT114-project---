@@ -1,6 +1,4 @@
-AUCTION SYSTEM SETUP GUIDE
-==========================
-
+The Deal setup guide
 Based on your terminal errors, follow these exact commands in order:
 
 1. COMPILE THE CODE:
@@ -11,12 +9,11 @@ Based on your terminal errors, follow these exact commands in order:
    Run the following command to start the backend:
    java -cp . AuctionServer
 
-   (Note: Keep this window open. You should see "Server Live on Port5000")
-
 3. START THE CLIENT (GUI):
    Open a SECOND PowerShell window, navigate to the same folder, and run:
-   java -cp . AuctionGUI
+   java TheDealGui
 
 COMMON FIXES:
 - The "-cp ." tells Java to look in the current folder for your files.
 - If "javac *.java" fails, PowerShell is the problem; listing the filenames manually (as shown in Step 1) fixes it.
+- If "java filename" fails javac --release 8 filename.java should fix 
