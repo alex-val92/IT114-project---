@@ -82,7 +82,7 @@ public class TheDealGui extends JFrame {
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                // Sends the random ID to the server immediately
+
                 out.println(playerId); 
 
                 String message;
@@ -120,7 +120,6 @@ public class TheDealGui extends JFrame {
         return; 
     }
 
-    // 2. Existing filters
     if (lower.contains("please enter your name") || lower.contains("welcome to the deal")) {
         return;
     }
