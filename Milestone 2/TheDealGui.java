@@ -10,37 +10,32 @@ public class TheDealGui extends JFrame {
     private PrintWriter out;
 
     private DefaultListModel<String> leaderboardModel;
-    private JTextField nameField;
     private JTextField bidField;
     private JLabel timerLabel;
     private Timer timer;
     private JLabel statusLabel;
     private int timeLeft = 60; 
+    private String playerId;
 
     public TheDealGui(String host, int port) {
+        // Generates the random ID immediately
+        this.playerId = "Player-" + (100000 + new Random().nextInt(900000));
         setupUI();
+        connectToServer(host, port);
     }
 
     private void setupUI() {
-        setTitle("THE DEAL");
-        setSize(400, 600);
+        setTitle("THE DEAL - " + playerId);
+        setSize(400, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        JPanel topPanel = new JPanel(new GridLayout(3, 1, 5, 5));
+        JPanel topPanel = new JPanel(new GridLayout(2, 1));
         timerLabel = new JLabel("Time Left: 60s", SwingConstants.CENTER);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        statusLabel = new JLabel("Connect", SwingConstants.CENTER);
-
-        JPanel nameInputPanel = new JPanel(new BorderLayout(5, 5));
-        nameField = new JTextField("Player-" + new Random().nextInt(999));
-        JButton connectBtn = new JButton("Connect");
-        nameInputPanel.add(nameField, BorderLayout.CENTER);
-        nameInputPanel.add(connectBtn, BorderLayout.EAST);
-
+        statusLabel = new JLabel("Connected as " + playerId, SwingConstants.CENTER);
         topPanel.add(timerLabel);
         topPanel.add(statusLabel);
-        topPanel.add(nameInputPanel);
         add(topPanel, BorderLayout.NORTH);
 
         leaderboardModel = new DefaultListModel<>();
@@ -49,25 +44,11 @@ public class TheDealGui extends JFrame {
 
         JPanel footer = new JPanel(new BorderLayout(5, 5));
         bidField = new JTextField();
-        bidField.setEnabled(false);
         JButton bidButton = new JButton("Place Bid");
-        bidButton.setEnabled(false);
-
         footer.add(new JLabel(" Your Bid: "), BorderLayout.WEST);
         footer.add(bidField, BorderLayout.CENTER);
         footer.add(bidButton, BorderLayout.EAST);
         add(footer, BorderLayout.SOUTH);
-
-        connectBtn.addActionListener(e -> {
-            String chosenName = nameField.getText().trim();
-            if (!chosenName.isEmpty()) {
-                connectToServer("localhost", 5000, chosenName);
-                connectBtn.setEnabled(false);
-                nameField.setEditable(false);
-                bidField.setEnabled(true);
-                bidButton.setEnabled(true);
-            }
-        });
 
         bidButton.addActionListener(e -> sendInBid());
         bidField.addActionListener(e -> sendInBid());
@@ -75,14 +56,15 @@ public class TheDealGui extends JFrame {
         countDownInit();
     }
 
-    private void connectToServer(String host, int port, String userName) {
+    private void connectToServer(String host, int port) {
         new Thread(() -> {
             try {
                 socket = new Socket(host, port);
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                out.println(userName); 
+                // Sends the random ID to the server immediately
+                out.println(playerId); 
 
                 String message;
                 while ((message = in.readLine()) != null) {
@@ -96,6 +78,12 @@ public class TheDealGui extends JFrame {
     }
 
     private void serverMessageHandle(String msg) {
+        // Filter out the server's request for a name since we send it automatically
+        String lower = msg.toLowerCase();
+        if (lower.contains("please enter your name") || lower.contains("welcome to the deal")) {
+            return;
+        }
+
         leaderboardModel.insertElementAt(msg, 0);
         if (msg.contains("Highest Bid") || msg.contains("highest bidder")) {
             resetTime();
