@@ -23,7 +23,6 @@ public class TheDealGui extends Jframe{
         setupUI();
         connectToServer(host, port);
 
-    }
 
     private void setupUI() {
         setTitle ("THE DEAL - " + playerId);
@@ -83,15 +82,16 @@ public class TheDealGui extends Jframe{
 
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Connection lost: " + e.getMessage());
+                    SwingUtilities.invokeLater(() -> statusLabel.setText("Disconnected from server."));
+                }
+            }).start();
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Could not connect to server: " + e.getMessage());
             System.exit(1);
         }
-        }).start();
-    }catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Connection lost: " + e.getMessage());
-        System.exit(1);
-        } 
     }
-    private void serverMessagehandle(String msg){
+    private void serverMessageHandle (String msg){
         leaderboardModel.insertElementAt(msg, 0);
-}
+    }
+
