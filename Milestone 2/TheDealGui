@@ -130,6 +130,6 @@ public class TheDealGui extends Jframe{
             timer.start();
         }
         public static void main(String[] args){
-            SwingUtilites.invokeLater(() -> new TheDealGui("localhost", 5000).setVisible(true));
+            SwingUtilities.invokeLater(() -> new TheDealGui("localhost", 5000).setVisible(true));
         }
     }
