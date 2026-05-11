@@ -93,5 +93,17 @@ public class TheDealGui extends Jframe{
     }
     private void serverMessageHandle (String msg){
         leaderboardModel.insertElementAt(msg, 0);
+
+        if(msg.contains("The Highest Bid:") || msg.contains("You are the highest bidder!")){
+            resetTimer();
+
+        }
+    }
+    private void sendInBid() {
+        String amount = bidField.getText().trim();
+        if(!amount.isEmpty()) {
+            out.println(amount);//send auction handler 
+            bidField.setText("");
+        }
     }
 
